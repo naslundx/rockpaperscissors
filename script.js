@@ -1,9 +1,25 @@
+const buttonPlayPause = document.getElementById('buttonPlayPause');
+buttonPlayPause.onclick = () => {
+    simulationRunning = !simulationRunning;
+}
+
+const buttonRestart = document.getElementById('buttonRestart');
+buttonRestart.onclick = () => {
+    restart();
+}
+
+const airock = document.getElementById('airock');
+const aiscissors = document.getElementById('aiscissors');
+const aipaper = document.getElementById('aipaper');
+
 const iso = new Isomer(document.getElementById("art"));
 
 const WHITE = new Isomer.Color(150, 150, 150, 0.4);
 const RED = new Isomer.Color(200, 100, 100, 0.6);
 const GREEN = new Isomer.Color(100, 200, 100, 0.6);
 const BLUE = new Isomer.Color(100, 100, 200, 0.6);
+
+let simulationRunning = true;
 
 const angleTo = (currentX, currentY, targetX, targetY) => {
     return (2 * Math.PI + Math.atan2((targetY - currentY), (targetX - currentX))) % (2 * Math.PI);
@@ -40,7 +56,11 @@ function makeGrid(xSize, ySize, zHeight, gridColor) {
 }
 
 let _id = 0;
-const objects = [];
+let objects = [];
+
+function clearObjects() {
+    objects = [];
+}
 
 function addRandomObject(team) {
     objects.push({
@@ -55,8 +75,10 @@ function addRandomObject(team) {
 }
 
 function draw() {
-  ai();
-  logic();
+  if (simulationRunning) {
+    ai();
+    logic();
+  }
   
   iso.canvas.clear();
   requestAnimationFrame(draw);
@@ -64,7 +86,7 @@ function draw() {
 
   for (const obj of objects) {
     const {x, y, size, angle, team} = obj;
-    const color = (team === 'rock' ? RED : (team === 'scissors' ? GREEN : BLUE)); 
+    const color = (team === 'rock' ? RED : (team === 'paper' ? GREEN : BLUE)); 
     const position = Isomer.Point(x,y,0);
     const block = Isomer.Shape.Prism(position, size, size, size);
     iso.add(block.rotateZ(Isomer.Point(x+size/2, y+size/2, 0), angle), color);
@@ -122,56 +144,41 @@ function logic() {
     }
 }
 
+function evalInContext(js, context) {
+    let x = (() => { return eval(js); }).call(context);
+}
+
 function ai() {
     for (const obj of objects) {
         obj.commands = [];
-
+        let body = '';
         if (obj.team === 'rock') {
-            const target = nearestOfType(obj.x, obj.y, 'scissors');
-            if (!target) {
-                continue;
-            }
-            const angle = angleTo(obj.x, obj.y, target.x, target.y);
-            if (Math.abs(angle - obj.angle) > 0.05) {
-                obj.commands = ['left'];
-            } else {
-                obj.commands = ['right'];
-            }
-            obj.commands.push('forward');
+            body = airock.value;
+        } else if (obj.team === 'scissors') {
+            body = aiscissors.value;
+        } else {
+            body = aipaper.value;
         }
-        else if (obj.team === 'scissors') {
-            const target = nearestOfType(obj.x, obj.y, 'paper');
-            if (!target) {
-                continue;
-            }
-            const angle = angleTo(obj.x, obj.y, target.x, target.y);
-            if (Math.abs(angle - obj.angle) > 0.05) {
-                obj.commands = ['left'];
-            } else {
-                obj.commands = ['right'];
-            }
-            obj.commands.push('forward');
+        try {
+            let fn = eval(body);
+            let result = fn(obj);
+            obj.commands = result;
         }
-        else if (obj.team === 'paper') {
-            const target = nearestOfType(obj.x, obj.y, 'rock');
-            if (!target) {
-                continue;
-            }
-            const angle = angleTo(obj.x, obj.y, target.x, target.y);
-            if (Math.abs(angle - obj.angle) > 0.05) {
-                obj.commands = ['left'];
-            } else {
-                obj.commands = ['right'];
-            }
-            obj.commands.push('forward');
+        catch {
+            // pass
         }
     }
 }
 
 // ---
-for (let i=0; i<10; i++) {
-    addRandomObject('rock');
-    addRandomObject('scissors');
-    addRandomObject('paper');
+function restart() {
+    clearObjects();
+    for (let i=0; i<10; i++) {
+        addRandomObject('rock');
+        addRandomObject('scissors');
+        addRandomObject('paper');
+    }
 }
+
+restart();
 draw();

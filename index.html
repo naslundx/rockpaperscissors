@@ -4,10 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Rock, paper, scissors by Marcus N</title>
 </head>
 <body>
-    <canvas width="1600" height="1200" id="art"></canvas>
+    <div class="toolbar">
+        <i class="fa fa-power-off" id="buttonPlayPause"></i>
+        <i class="fa fa-refresh" id="buttonRestart"></i>
+    </div>
+    <canvas width="1400" height="800" id="art"></canvas>
+    <div class="setup">
+        <textarea id="airock" rows="20" cols="50">
+(obj) => {
+    // ROCK
+    let commands = [];
+    const target = nearestOfType(obj.x, obj.y, 'scissors');
+    if (!target) {
+        return [];
+    }
+    const angle = angleTo(obj.x, obj.y, target.x, target.y);
+    if (Math.abs(angle - obj.angle) > 0.05) {
+        commands.push('left');
+    } else {
+        commands.push('right');
+    }
+    commands.push('forward');
+    return commands;
+}
+        </textarea>
+        <textarea id="aipaper" rows="20" cols="50">
+(obj) => {
+    // PAPER
+    let commands = [];
+    const target = nearestOfType(obj.x, obj.y, 'rock');
+    if (!target) {
+        return [];
+    }
+    const angle = angleTo(obj.x, obj.y, target.x, target.y);
+    if (Math.abs(angle - obj.angle) > 0.05) {
+        commands.push('left');
+    } else {
+        commands.push('right');
+    }
+    commands.push('forward');
+    return commands;
+}
+        </textarea>
+        <textarea id="aiscissors" rows="20" cols="50">
+(obj) => {
+    // SCISSORS
+    let commands = [];
+    const target = nearestOfType(obj.x, obj.y, 'paper');
+    if (!target) {
+        return [];
+    }
+    const angle = angleTo(obj.x, obj.y, target.x, target.y);
+    if (Math.abs(angle - obj.angle) > 0.05) {
+        commands.push('left');
+    } else {
+        commands.push('right');
+    }
+    commands.push('forward');
+    return commands;
+}
+        </textarea>
+    </div>
     <script src="isomer.min.js"></script>
     <script src="script.js"></script>
 </body>

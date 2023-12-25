@@ -1,4 +1,37 @@
 #art {
-    width: 800px;
-    height: 600px;
+    width: 700px;
+    height: 400px;
   }
+
+.toolbar {
+  font-size: xx-large;
+}
+
+.toolbar i {
+  border: 1px solid black;
+}
+
+.toolbar i:hover {
+  color: blue;
+}
+
+.setup {
+  display: flex;
+  flex-direction: row;
+}
+
+.setup textarea {
+  flex: 1;
+}
+
+#airock {
+  background-color: rgba(200,0,0,0.2)
+}
+
+#aipaper {
+  background-color: rgba(0,200,0,0.2)
+}
+
+#aiscissors {
+  background-color: rgba(0,0,200,0.2)
+}
