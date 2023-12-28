@@ -14,33 +14,29 @@
     </div>
     <canvas width="1400" height="800" id="art"></canvas>
     <div class="setup">
+        <div class="rock">
+            <p>Rock</p>
+            Objects: <input id="countrock" type="number" min="0" max="100" value="1">
+            <br>
         <textarea id="airock" rows="20" cols="50">
+
 (obj) => {
-    // ROCK
-    let commands = [];
-    const target = nearestOfType(obj.x, obj.y, 'scissors');
-    if (!target) {
-        return [];
-    }
-    const angle = angleTo(obj.x, obj.y, target.x, target.y);
-    if (Math.abs(angle - obj.angle) > 0.05) {
-        commands.push('left');
-    } else {
-        commands.push('right');
-    }
-    commands.push('forward');
-    return commands;
+    return ['left', 'forward'];
 }
         </textarea>
+    </div>
+    <div class="paper">
+        <p>Paper</p>
+        Objects: <input id="countpaper" type="number" min="0" max="100" value="3">
+        <br>
         <textarea id="aipaper" rows="20" cols="50">
 (obj) => {
-    // PAPER
     let commands = [];
-    const target = nearestOfType(obj.x, obj.y, 'rock');
+    const target = nearestOfType(obj, 'rock');
     if (!target) {
         return [];
     }
-    const angle = angleTo(obj.x, obj.y, target.x, target.y);
+    const angle = angleTo(obj, target);
     if (Math.abs(angle - obj.angle) > 0.05) {
         commands.push('left');
     } else {
@@ -50,15 +46,19 @@
     return commands;
 }
         </textarea>
+    </div>
+    <div class="scissors">
+        <p>Scissors</p>
+        Objects: <input id="countscissors" type="number" min="0" max="100" value="3">
+        <br>
         <textarea id="aiscissors" rows="20" cols="50">
 (obj) => {
-    // SCISSORS
     let commands = [];
-    const target = nearestOfType(obj.x, obj.y, 'paper');
+    const target = nearestOfType(obj, 'paper');
     if (!target) {
         return [];
     }
-    const angle = angleTo(obj.x, obj.y, target.x, target.y);
+    const angle = angleTo(obj, target);
     if (Math.abs(angle - obj.angle) > 0.05) {
         commands.push('left');
     } else {
@@ -68,6 +68,7 @@
     return commands;
 }
         </textarea>
+    </div>
     </div>
     <script src="isomer.min.js"></script>
     <script src="script.js"></script>
